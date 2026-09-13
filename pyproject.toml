@@ -18,6 +18,7 @@ dependencies = [
 
 [project.scripts]
 pipecat-langgraph-example = "gym_support.server:main"
+gym-support-eval = "gym_support.eval:main"
 
 [build-system]
 requires = ["hatchling"]

@@ -107,6 +107,31 @@ transcript each turn, so interruptions never corrupt routing state.
 `voice.py` is the whole story — the only real change from the text app is that
 the LLM stage is `LangGraphLLMService` (our graph) instead of a stock model.
 
+## Evaluation
+
+```bash
+uv run gym-support-eval
+```
+
+Runs a handful of scripted conversations through the graph and checks:
+
+- **Latency** — time per test case (in the terminal table).
+- **Routing correctness** — did the graph land on the right specialist
+  (including a mid-conversation intent switch, exercising `transfer_to_triage`
+  and re-routing, not just a single handoff).
+- **Hallucination** — for credits/booking, the agent's reply is checked
+  against `mock_data` directly (the actual credit counts and class names),
+  not against hardcoded expected numbers — so it's really checking "did the
+  agent say what's true," not "did it match a fixture."
+
+It also runs one **exploratory** case with no pass/fail: a request outside
+all three specialists' scope (e.g. a refund policy question). Triage's
+current prompt has no "hand off to a human" option, so this documents a real
+gap rather than asserting behavior that doesn't exist — worth reading before
+extending the prompts.
+
+Requires `ANTHROPIC_API_KEY` — this calls the real model, not a mock.
+
 ## What you see in LangSmith
 
 With `LANGSMITH_TRACING=true`, LangChain/LangGraph trace themselves
