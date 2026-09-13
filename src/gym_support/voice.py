@@ -69,11 +69,9 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments) -> Non
     stt = OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))
 
     # --- LLM: our LangGraph runs as the brain (see langgraph_llm_service.py) -
-    llm = LangGraphLLMService(
-        api_key=os.getenv("OPENAI_API_KEY"),
-        graph=build_graph(),
-    )
-
+    # No api_key here: this service makes no provider API calls of its own —
+    # the graph does its own model calls (ANTHROPIC_API_KEY, read in graph.py).
+    llm = LangGraphLLMService(graph=build_graph())
 
     # --- Speech out ----------------------------------------------------------
     tts = OpenAITTSService(
